@@ -65,7 +65,13 @@ public class FXMLController {
 
     @FXML
     void doTrovaCamminoVirtuoso(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	doTrovaAnnataOro(event);
+    	List<RisultatoAnnata> camminoVirtuoso=model.camminoVirtuoso();
+    	this.txtResult.appendText("\nIl cammino virtuoso per la squadra scelta e':\n");
+    	for(RisultatoAnnata r:camminoVirtuoso) {
+    		this.txtResult.appendText(r+"\n");
+    	}
     }
     
     void loadData() {

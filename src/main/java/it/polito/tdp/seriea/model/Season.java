@@ -1,7 +1,7 @@
 package it.polito.tdp.seriea.model;
 
-public class Season {
-	private int season;
+public class Season implements Comparable<Season>{
+	private Integer season;
 	private String description;
 
 	public Season(int season, String description) {
@@ -13,7 +13,7 @@ public class Season {
 	/**
 	 * @return the season
 	 */
-	public int getSeason() {
+	public Integer getSeason() {
 		return season;
 	}
 
@@ -28,7 +28,7 @@ public class Season {
 	 * @param season
 	 * the season to set
 	 */
-	public void setSeason(int season) {
+	public void setSeason(Integer season) {
 		this.season = season;
 	}
 
@@ -80,6 +80,11 @@ public class Season {
 	@Override
 	public String toString() {
 		return description;
+	}
+
+	@Override
+	public int compareTo(Season o) {
+		return season.compareTo(o.getSeason());
 	}
 
 }

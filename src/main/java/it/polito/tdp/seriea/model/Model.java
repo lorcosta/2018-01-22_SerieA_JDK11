@@ -1,6 +1,7 @@
 package it.polito.tdp.seriea.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,18 +18,21 @@ public class Model {
 	private SerieADAO dao= new SerieADAO();
 	private Map<Integer,Season> idMapSeason;
 	private Map<String,Team> idMapTeam;
-	private List<RisultatoAnnata> risultatiAnnataSquadra=new ArrayList<>();
+	private List<RisultatoAnnata> risultatiAnnataSquadra;
 	private Graph<Season,DefaultWeightedEdge> graph;
+	private List<RisultatoAnnata> camminoVirtuoso;
 	
 	public Model() {
 		idMapSeason=new HashMap<>();
 		idMapTeam=new HashMap<>();
+		camminoVirtuoso=new ArrayList<>();
 		dao.listAllSeasons(idMapSeason);
 	}
 	public List<Team> getTeams(){
 		return dao.listTeams(idMapTeam);
 	}
 	public List<RisultatoAnnata> selezionaSquadra(Team squadra) {
+		risultatiAnnataSquadra=new ArrayList<>();
 		List<Match> matches=dao.selezionaSquadra(squadra, idMapSeason, idMapTeam);
 		Season stagione=matches.get(0).getSeason();
 		Integer punteggioStagione=0;
@@ -102,6 +106,36 @@ public class Model {
 		}
 		return best;
 	}
+	
+	public List<RisultatoAnnata> camminoVirtuoso() {
+		Collections.sort(risultatiAnnataSquadra);
+		List<RisultatoAnnata> parziale= new ArrayList<>();
+		ricorsione(parziale);
+		return camminoVirtuoso;
+	}
+	private void ricorsione(List<RisultatoAnnata> parziale) {
+		if(parziale.size()>1) {
+			camminoVirtuoso.add(parziale.get(0));
+			if(camminoVirtuoso.get(camminoVirtuoso.size()-1).getPunti()<parziale.get(parziale.size()-1).getPunti() 
+					&& parziale.get(parziale.size()-1).getStagione().getSeason()>camminoVirtuoso.get(camminoVirtuoso.size()-1).getStagione().getSeason()) {
+				//caso terminale
+				camminoVirtuoso=new ArrayList<>(parziale);
+			}
+		}
+		
+		for(RisultatoAnnata r:risultatiAnnataSquadra) {
+			if(parziale.size()>1 && r.getPunti()>parziale.get(parziale.size()-1).getPunti()
+					&& r.getStagione().getSeason()>parziale.get(parziale.size()-1).getStagione().getSeason()) {
+				parziale.add(r);
+				ricorsione(parziale);
+				parziale.remove(parziale.size()-1);
+			}else if(parziale.size()<=1) {
+				parziale.add(r);
+			}
+		}
+		
+	}
+	
 	
 	
 }

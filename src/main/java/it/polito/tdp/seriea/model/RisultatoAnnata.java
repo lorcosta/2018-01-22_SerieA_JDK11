@@ -1,6 +1,6 @@
 package it.polito.tdp.seriea.model;
 
-public class RisultatoAnnata {
+public class RisultatoAnnata implements Comparable<RisultatoAnnata>{
 	private Team squadra;
 	private Integer punti;
 	private Season stagione;
@@ -36,6 +36,10 @@ public class RisultatoAnnata {
 	@Override
 	public String toString() {
 		return stagione+" "+squadra+", punti: "+punti;
+	}
+	@Override
+	public int compareTo(RisultatoAnnata other) {
+		return this.stagione.getSeason().compareTo(other.getStagione().getSeason());
 	}
 	
 }
