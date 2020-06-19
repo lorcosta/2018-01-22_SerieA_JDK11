@@ -61,6 +61,9 @@ public class Model {
 				}
 			}
 		}
+		if(stagione.getSeason().compareTo(2017)==0) {
+			risultatiAnnataSquadra.add(new RisultatoAnnata(idMapTeam.get(squadra.getTeam()),punteggioStagione,stagione));
+		}
 		return risultatiAnnataSquadra;
 	}
 	public void creaGrafo() {
@@ -71,12 +74,13 @@ public class Model {
 		//creo gli archi
 		for(RisultatoAnnata r1:risultatiAnnataSquadra) {
 			for(RisultatoAnnata r2:risultatiAnnataSquadra) {
-				if(!r1.equals(r2)) {
+				if(!r1.equals(r2) && !this.graph.containsEdge(this.graph.getEdge(r1.getStagione(), r2.getStagione()))
+						&& !this.graph.containsEdge(this.graph.getEdge(r2.getStagione(), r1.getStagione()))) {
 					Double peso=(double) (r1.getPunti()-r2.getPunti());
-					if(peso>0) {
+					if(r1.getPunti()>r2.getPunti()) {
 						//aggiungo un arco da r1 a r2 con peso r1-r2
 						Graphs.addEdgeWithVertices(this.graph, r1.getStagione(), r2.getStagione(),peso);
-					}else {
+					}else if(r2.getPunti()>r1.getPunti()){
 						//aggiungo un arco da r2 a r1 con peso r2-r1
 						Graphs.addEdgeWithVertices(this.graph, r2.getStagione(),r1.getStagione(),-peso);
 					}
@@ -84,6 +88,13 @@ public class Model {
 			}
 		}
 		
+	}
+	
+	public Integer getNumVertici() {
+		return this.graph.vertexSet().size();
+	}
+	public Integer getNumArchi() {
+		return this.graph.edgeSet().size();
 	}
 	
 	public AnnataOro annataOro() {
@@ -104,6 +115,18 @@ public class Model {
 				best=new AnnataOro(s,maxSomma);
 			}
 		}
+		/*Collections.sort(risultatiAnnataSquadra);
+		Season s=risultatiAnnataSquadra.get(0).getStagione();
+		Set<DefaultWeightedEdge> incoming=this.graph.incomingEdgesOf(s);
+		for(DefaultWeightedEdge e:incoming) {
+			entranti+=this.graph.getEdgeWeight(e);
+		}
+		Set<DefaultWeightedEdge> outgoing=this.graph.outgoingEdgesOf(s);
+		for(DefaultWeightedEdge e:outgoing) {
+			uscenti+=this.graph.getEdgeWeight(e);
+		}
+		maxSomma=entranti-uscenti;
+		best=new AnnataOro(s,maxSomma);*/
 		return best;
 	}
 	

@@ -59,8 +59,15 @@ public class FXMLController {
     	this.txtResult.clear();
     	model.creaGrafo();
     	AnnataOro best=model.annataOro();
+    	Integer vertici=model.getNumVertici(), archi=model.getNumArchi();
+    	if(vertici==0 || archi.equals(0)) {
+    		this.txtResult.appendText("ATTENZIONE! Qualcosa e' andato storto nella creazione del grafo.\n");
+    		return;
+    	}
+    	this.txtResult.appendText("GRAFO CREATO!\n #VERTICI: "+vertici+" e #ARCHI: "+archi+"\n");
     	this.txtResult.appendText("L'annata d'oro per la squadra selezionata e': \n");
     	this.txtResult.appendText(best.toString());
+    	System.out.println(best.getS().toString());
     }
 
     @FXML
